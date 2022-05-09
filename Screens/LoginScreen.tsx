@@ -1,20 +1,32 @@
-import  React, { useContext, useState } from "react";
+import  React, { useContext, useEffect, useState } from "react";
 import { Button, Image, StyleSheet, TextInput, View } from "react-native";
 import { styles } from "../styles";
 import { AuthContext } from "../context/contextProvider";
 import PINInput from "../components/PinInput";
 import login from "../functions/authUser";
 
+async function _auth(username: string, password: string)
+{
+    var u = null
+    try{u = await login(username, password)}
+    catch(e){alert(e)}
+    if( u != null) {return true}
+    return false
+}
+
 export default function LoginScreen({navigation}: any)
 {
     const [user,setUser]: any = useContext(AuthContext)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    
-    const auth = () =>
+
+    const auth = async () =>
     {
-        login(username, password)
-        .then((user) => setUser(user))
+        var u = {}
+        try {u = await login(username, password)}
+        catch(e) {alert(e + '***e')}
+        if(u != null) {setUser(u);  return true}
+        return false
     }
 
     return(
@@ -24,10 +36,9 @@ export default function LoginScreen({navigation}: any)
             </View>
             <View style={styles.body}>
                 <TextInput autoCapitalize='words' style={{textAlign:'center'}} placeholder="Nome" onChangeText={setUsername} value={username} />
-                <PINInput placeholder="PIN" onChangeText={setPassword} value={password} /> 
+                <PINInput placeholder="PIN" onChangeText={setPassword} value={password} />
                 <Button title="Login" onPress={() => auth()} />
                 <Button title="Cadastro" onPress={() => navigation.navigate('Sign Up')} />
-                <Button title='Debug' onPress={() => alert(Object.values(user))} />
             </View>
         </View>
     )

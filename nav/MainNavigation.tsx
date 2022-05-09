@@ -4,25 +4,25 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../Screens/LoginScreen';
 import SignupScreen from '../Screens/SignupScreen';
 import HomeNavigation from '../nav/HomeNavigation';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import AuthContextProvider, { AuthContext } from '../context/contextProvider';
 
 const Stack = createNativeStackNavigator()
 
-export const reducerSetUser = (prevUser: any, user: any) =>
-{
-    prevUser = user
-}
+
 
 export default function MainNav({navigation}: any) {
 
-    const {user, setUser}: any = useContext(AuthContext)
-    const [state, dispatch] = useReducer(reducerSetUser, user)
-    useEffect(() => alert('user useEffect'),
-    [user])
+    // const reducerSetUser = (prevUser: any, user: any) => {
+    //     alert(prevUser + ' user ' + user)
+    //     dispatch(user)
+    // }
+
+    const [user, setUser] = useState(null)
+    // const [state, dispatch]: any = useReducer(reducerSetUser, user)
 
     return (
-        <AuthContextProvider>
+        <AuthContextProvider value={[user, setUser]}>
             <NavigationContainer>
                 <Stack.Navigator>
                     {user != undefined ?

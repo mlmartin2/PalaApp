@@ -16,7 +16,7 @@ export default async function login(username: string, password: string)
     {
         let u = await get_dataEntry('usuarios', 'name', username)
         if(u.pin_hash != password) alert('Senha inválida')
-        else return {...u}
+        else {return {...u}}
     }
     return null    
 } 
