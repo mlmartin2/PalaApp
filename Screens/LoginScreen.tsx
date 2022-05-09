@@ -1,5 +1,5 @@
 import  React, { useContext, useEffect, useState } from "react";
-import { Button, Image, StyleSheet, TextInput, View } from "react-native";
+import { Button, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { styles } from "../styles";
 import { AuthContext } from "../context/contextProvider";
 import PINInput from "../components/PinInput";
@@ -30,17 +30,21 @@ export default function LoginScreen({navigation}: any)
     }
 
     return(
-        <View style={styles.root}>
-            <View style={styles.header}>
-                <Image style={styles.logo} source={require('../assets/vetorpalaonly.png')} />
-            </View>
-            <View style={styles.body}>
-                <TextInput autoCapitalize='words' style={{textAlign:'center'}} placeholder="Nome" onChangeText={setUsername} value={username} />
-                <PINInput placeholder="PIN" onChangeText={setPassword} value={password} />
-                <Button title="Login" onPress={() => auth()} />
-                <Button title="Cadastro" onPress={() => navigation.navigate('Sign Up')} />
-            </View>
-        </View>
+        <KeyboardAvoidingView >
+            <ScrollView>
+                <View style={{ flex: 1 }}>
+                    <View style={{ backgroundColor: '#000000', alignItems:'center', height:'60%' }}>
+                        <Image style={{ resizeMode:'center', width:'100%' }} source={require('../assets/vetorpalaonly.png')} />
+                    </View>
+                    <View >
+                        <TextInput autoCapitalize='words' style={{ textAlign: 'center' }} placeholder="Nome" onChangeText={setUsername} value={username} />
+                        <PINInput placeholder="PIN" onChangeText={setPassword} value={password} />
+                        <Button title="Login" onPress={() => auth()} />
+                        <Button title="Cadastro" onPress={() => navigation.navigate('Sign Up')} />
+                    </View>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 
