@@ -34,7 +34,7 @@ const ContributionList = ({contributions}: any) =>
                 <View style={{flexDirection:'row'}} key={contribution.id}>
                     <Image source={money_icon} style={{maxHeight:20, maxWidth:20}}/>
                     <Text>{contribution.description}: </Text>
-                    <Text>{edited_cost} R$</Text>
+                    <Text>R$ {edited_cost}</Text>
                 </View>
             )
         })
@@ -63,12 +63,16 @@ function string_to_currency(str: string)
     return currency_text
 }
 
-const InputCost = ({value}: any) =>
+const CurrencyInput = ({value}: any) =>
 {
-    const [moneyNumber, setMoneyNumber] = useState(value)
+    const [moneyNumber, setMoneyNumber] = value
     const [text, setText] = useState('0,00')
     const [rawText, setRawText] = useState('')
-    
+
+    useEffect(() => {
+        if(moneyNumber == 0) {setText('0,00'); setRawText('')}
+    }, [moneyNumber])
+     
     function onChangeText(e: any) {
         let raw_Text = rawText
         if (e.length < text.length) {
@@ -83,32 +87,40 @@ const InputCost = ({value}: any) =>
         if(raw_Text != '0,00') raw_Text = raw_Text.replace(/^0+/, '')
         else return
         setRawText(raw_Text)
-        setText(string_to_currency(raw_Text))
+        let final_text = string_to_currency(raw_Text)
+        setText(final_text)
+        setMoneyNumber(final_text.replace(',','.'))
     }
     
     return (
-        <TextInput keyboardType='number-pad'  placeholder="TESTE" onChangeText={onChangeText} onChange={(e) => {e.preventDefault()}} value={text}  />
+        <View style={{flexDirection:'row', alignItems:'center'}}>
+            <Text style={{paddingRight:4}}>R$</Text>
+            <TextInput keyboardType='number-pad' onChangeText={onChangeText} value={text}  />
+        </View>
     )
 }
 
-const InputExpense = ({userid}: any) =>
+const InputExpense = ({userid, state}: any) =>
 {
     const[description, setDescription] = useState('')
     const[value, setValue] = useState(0)
+    const[contributions, setContributions] = state
 
     async function postExpense()
     {
-        let expense: Expense = new Expense_Class(description, value, userid ) 
-        await axios.post('http://192.168.1.112:8000/api/caixinha/',
-        )
+        let expense: Expense = new Expense_Class(description, value, userid) 
+        await axios.post('http://192.168.1.112:8000/api/caixinha/', expense
+        ).then((resp) => setContributions([...contributions, resp.data]))
+        setDescription('')
+        setValue(0)
     }
-
 
     return (
         <View>
             <Text>Adicionar Gasto:</Text>
-            <TextInput placeholder="descrição do gasto" onChangeText={setDescription} value={description}  />
-            <Button title="Adicionar" onPress={() =>{}} />
+            <TextInput placeholder="descrição do gasto" onChangeText={setDescription} value={description} />
+            <CurrencyInput value={[value, setValue]} />
+            <Button title="Adicionar" onPress={() =>postExpense()} />
         </View>
     )
 }
@@ -118,7 +130,6 @@ export default function HomeScreen({navigation}: any)
     const [userTask, setUserTask]: any = useState()
     const [user, setUser]:any = useContext(AuthContext)
     const [contributions, setContributions]: any = useState()
-    const [testval, setTestval]: any = useState()
 
     useEffect(() => {
         let entry: any
@@ -150,8 +161,7 @@ export default function HomeScreen({navigation}: any)
                     <Text>Gastos com a rep:</Text>
                     <ContributionList contributions={contributions} />
                     <View style={{paddingTop:20}}>
-                        <InputExpense />
-                        <InputCost value={testval}/>
+                        <InputExpense userid={user.id} state={[contributions, setContributions]} />
                     </View>
                 </View>
             </View>

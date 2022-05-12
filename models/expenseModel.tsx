@@ -2,22 +2,20 @@ import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Expense{
-    id: string;
+    //id: string;
     description: string;
     cost: number;
-    user: string;
+    user: string | null;
 }
 
 export default class Expense_Class
 {
-    id: string;
     description: string;
     cost: number;
-    user: string;
+    user: string | null;
 
-    constructor(description:string, cost:number, user:string)
+    constructor(description:string, cost:number, user:string|null = null)
     {
-        this.id = uuidv4()
         this.description = description
         this.cost = cost
         this.user = user
