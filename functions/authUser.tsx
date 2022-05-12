@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import { AuthContext } from "../context/contextProvider";
-import { find_Value, get_dataEntry } from "./dbHandler";
+import { find_Value, get_apiEntry, get_dataEntry } from "./dbHandler";
 
 // REFATORAR
 // mudar validators
@@ -14,7 +14,8 @@ export default async function login(username: string, password: string)
     else if(password == '') alert('senha em branco')
     else
     {
-        let u = await get_dataEntry('usuarios', 'name', username)
+        let u = await get_apiEntry('usuarios', 'name', username)
+        alert(Object.keys(u))
         if(u.pin_hash != password) alert('Senha inválida')
         else {return {...u}}
     }

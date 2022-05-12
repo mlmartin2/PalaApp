@@ -4,6 +4,7 @@ import { styles } from "../styles";
 import { AuthContext } from "../context/contextProvider";
 import PINInput from "../components/PinInput";
 import login from "../functions/authUser";
+import axios from "axios";
 
 async function _auth(username: string, password: string)
 {
@@ -14,6 +15,14 @@ async function _auth(username: string, password: string)
     return false
 }
 
+// 
+async function debugfunc()
+{
+    let raw = await axios.get('http://192.168.1.112:8000/data/savings/11fbfa18-e885-4b0a-b589-160b2c72c7e4')
+    let u = raw.data
+    alert(u)
+}
+
 export default function LoginScreen({navigation}: any)
 {
     const [user,setUser]: any = useContext(AuthContext)
@@ -22,7 +31,7 @@ export default function LoginScreen({navigation}: any)
 
     const auth = async () =>
     {
-        var u = {}
+        var u: any = {}
         try {u = await login(username, password)}
         catch(e) {alert(e + '***e')}
         if(u != null) {setUser(u);  return true}
@@ -41,6 +50,7 @@ export default function LoginScreen({navigation}: any)
                         <PINInput placeholder="PIN" onChangeText={setPassword} value={password} />
                         <Button title="Login" onPress={() => auth()} />
                         <Button title="Cadastro" onPress={() => navigation.navigate('Sign Up')} />
+                        <Button title='Debug' onPress={() => debugfunc()} />
                     </View>
                 </View>
             </ScrollView>

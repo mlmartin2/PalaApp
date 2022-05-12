@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = 'http://192.168.1.112:8000/'
+const host = 'http://192.168.1.112:8000/api/'
 
 export default async function get_dataSet(dataset_name: string)
 {
@@ -14,13 +14,22 @@ export default async function get_dataSet(dataset_name: string)
     return users
 }
 
-export async function get_dataEntry(dataset_name:string, column_name: string, data_value: string)
+export async function get_dataEntry(dataset_name: string, dataset_argument: string)
 {
-    var users: any = await get_dataSet('usuarios')
-    for(let i = 0; i < users.length; i++ )
+    var dataSet: object = {}
+    await axios.get('http://192.168.1.112:8000/data/'+ dataset_name +'/' + dataset_argument)
+    .then((dataset) => dataSet = dataset )
+    return dataSet
+}
+
+export async function get_apiEntry(dataset_name:string, column_name: string, data_value: string)
+{
+    var dataSet: any = await get_dataSet(dataset_name)
+    for(let i = 0; i < dataSet.length; i++ )
     {
-        if(users[i][column_name] == data_value) return users[i]
+        if(dataSet[i][column_name] == data_value) {return dataSet[i]}
     }
+    alert('a return null')
     return null;
 }
 
